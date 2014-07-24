@@ -124,12 +124,19 @@ ActiveSupport.on_load(:active_record) do
   include PaperTrail::Model
 end
 
-# Require frameworks
-require 'paper_trail/frameworks/sinatra'
-if defined? Rails
-  require 'paper_trail/frameworks/rails'
+
+if ENV["PAPER_TRAIL_FRAMEWORK"]
+  require "paper_trail/frameworks/#{ENV["PAPER_TRAIL_FRAMEWORK"]}"
 else
-  require 'paper_trail/frameworks/active_record'
+  # Require frameworks
+  require 'paper_trail/frameworks/sinatra'
+
+  if defined? Rails
+    require 'paper_trail/frameworks/rails'
+  else
+    require 'paper_trail/frameworks/active_record'
+  end
 end
+
 require 'paper_trail/frameworks/rspec' if defined? RSpec::Core
 require 'paper_trail/frameworks/cucumber' if defined? World
